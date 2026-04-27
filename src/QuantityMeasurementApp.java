@@ -1,59 +1,62 @@
-
 public class QuantityMeasurementApp {
-
-    // UC7: Addition with target unit
-    public static Length demonstrateLengthAddition(
-            Length l1,
-            Length l2,
-            Length.LengthUnit targetUnit) {
-
-        Length result = l1.add(l2, targetUnit);
-
-        System.out.println("add(" + l1 + ", " + l2 + ", " + targetUnit + ") -> " + result);
-
-        return result;
-    }
 
     public static void main(String[] args) {
 
-        demonstrateLengthAddition(
-                new Length(1.0, Length.LengthUnit.FEET),
-                new Length(12.0, Length.LengthUnit.INCHES),
-                Length.LengthUnit.FEET);
+        // Conversion
+        System.out.println(
+            new Length(1.0, Length.LengthUnit.FEET)
+                .convertTo(Length.LengthUnit.INCHES)
+        );
 
-        demonstrateLengthAddition(
-                new Length(1.0, Length.LengthUnit.FEET),
-                new Length(12.0, Length.LengthUnit.INCHES),
-                Length.LengthUnit.INCHES);
+        // Equality
+        System.out.println(
+            new Length(36.0, Length.LengthUnit.INCHES)
+                .equals(new Length(1.0, Length.LengthUnit.YARDS))
+        );
 
-        demonstrateLengthAddition(
-                new Length(1.0, Length.LengthUnit.FEET),
-                new Length(12.0, Length.LengthUnit.INCHES),
-                Length.LengthUnit.YARDS);
+        // Addition (same unit)
+        System.out.println(
+            new Length(1.0, Length.LengthUnit.FEET)
+                .add(new Length(12.0, Length.LengthUnit.INCHES))
+        );
 
-        demonstrateLengthAddition(
-                new Length(1.0, Length.LengthUnit.YARDS),
-                new Length(3.0, Length.LengthUnit.FEET),
-                Length.LengthUnit.YARDS);
+        // Addition (target unit)
+        System.out.println(
+            new Length(1.0, Length.LengthUnit.FEET)
+                .add(new Length(12.0, Length.LengthUnit.INCHES),
+                     Length.LengthUnit.FEET)
+        );
 
-        demonstrateLengthAddition(
-                new Length(36.0, Length.LengthUnit.INCHES),
-                new Length(1.0, Length.LengthUnit.YARDS),
-                Length.LengthUnit.FEET);
+        System.out.println(
+            new Length(1.0, Length.LengthUnit.FEET)
+                .add(new Length(12.0, Length.LengthUnit.INCHES),
+                     Length.LengthUnit.INCHES)
+        );
 
-        demonstrateLengthAddition(
-                new Length(2.54, Length.LengthUnit.CENTIMETERS),
-                new Length(1.0, Length.LengthUnit.INCHES),
-                Length.LengthUnit.CENTIMETERS);
+        // Yards example
+        System.out.println(
+            new Length(1.0, Length.LengthUnit.YARDS)
+                .add(new Length(3.0, Length.LengthUnit.FEET),
+                     Length.LengthUnit.YARDS)
+        );
 
-        demonstrateLengthAddition(
-                new Length(5.0, Length.LengthUnit.FEET),
-                new Length(0.0, Length.LengthUnit.INCHES),
-                Length.LengthUnit.YARDS);
+        // CM example
+        System.out.println(
+            new Length(2.54, Length.LengthUnit.CENTIMETERS)
+                .convertTo(Length.LengthUnit.INCHES)
+        );
 
-        demonstrateLengthAddition(
-                new Length(5.0, Length.LengthUnit.FEET),
-                new Length(-2.0, Length.LengthUnit.FEET),
-                Length.LengthUnit.INCHES);
+        // Edge cases
+        System.out.println(
+            new Length(5.0, Length.LengthUnit.FEET)
+                .add(new Length(0.0, Length.LengthUnit.INCHES),
+                     Length.LengthUnit.FEET)
+        );
+
+        System.out.println(
+            new Length(5.0, Length.LengthUnit.FEET)
+                .add(new Length(-2.0, Length.LengthUnit.FEET),
+                     Length.LengthUnit.INCHES)
+        );
     }
 }
