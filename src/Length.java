@@ -4,7 +4,7 @@ public class Length {
     private double value;
     private LengthUnit unit;
 
-    // Enum (base unit = inches)
+    // Base unit = inches
     public enum LengthUnit {
         FEET(12.0),
         INCHES(1.0),
@@ -28,9 +28,15 @@ public class Length {
         this.unit = unit;
     }
 
-    // Convert to inches (base unit)
+    // Convert to base unit (inches)
     private double convertToBaseUnit() {
-        double result = this.value * this.unit.getConversionFactor();
+        double result = value * unit.getConversionFactor();
+        return Math.round(result * 100.0) / 100.0;
+    }
+
+    // Convert from inches → target unit
+    private double convertFromBaseToTargetUnit(double inches, LengthUnit targetUnit) {
+        double result = inches / targetUnit.getConversionFactor();
         return Math.round(result * 100.0) / 100.0;
     }
 
@@ -55,16 +61,32 @@ public class Length {
         }
 
         double base = convertToBaseUnit();
-        double converted = base / targetUnit.getConversionFactor();
-        converted = Math.round(converted * 100.0) / 100.0;
+        double converted = convertFromBaseToTargetUnit(base, targetUnit);
 
         return new Length(converted, targetUnit);
     }
 
     /**
-     * ✅ UC6: ADD METHOD
+     * UC6: Add and return in THIS unit
      */
     public Length add(Length thatLength) {
+        return addAndConvert(thatLength, this.unit);
+    }
+
+    /**
+     * ✅ UC7: Add and return in TARGET unit
+     */
+    public Length add(Length thatLength, LengthUnit targetUnit) {
+        if (targetUnit == null) {
+            throw new IllegalArgumentException("Target unit cannot be null");
+        }
+        return addAndConvert(thatLength, targetUnit);
+    }
+
+    /**
+     * Core reusable logic
+     */
+    private Length addAndConvert(Length thatLength, LengthUnit targetUnit) {
         if (thatLength == null) {
             throw new IllegalArgumentException("Length cannot be null");
         }
@@ -76,19 +98,11 @@ public class Length {
         // Step 2: add
         double sumInches = thisInches + thatInches;
 
-        // Step 3: convert back to THIS unit
-        double resultValue = convertFromBaseToTargetUnit(sumInches, this.unit);
+        // Step 3: convert to target unit
+        double resultValue = convertFromBaseToTargetUnit(sumInches, targetUnit);
 
         // Step 4: return new object
-        return new Length(resultValue, this.unit);
-    }
-
-    /**
-     * Helper method (used in add + convertTo)
-     */
-    private double convertFromBaseToTargetUnit(double inches, LengthUnit targetUnit) {
-        double result = inches / targetUnit.getConversionFactor();
-        return Math.round(result * 100.0) / 100.0;
+        return new Length(resultValue, targetUnit);
     }
 
     @Override
