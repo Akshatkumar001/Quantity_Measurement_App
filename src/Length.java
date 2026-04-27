@@ -1,17 +1,10 @@
 
-
-/**
- * A generic class for representing and comparing lengths in different units.
- * Base unit: inches
- */
 public class Length {
 
     private double value;
     private LengthUnit unit;
 
-    /**
-     * Supported units with conversion factors relative to inches
-     */
+    // Enum (base unit = inches)
     public enum LengthUnit {
         FEET(12.0),
         INCHES(1.0),
@@ -35,58 +28,71 @@ public class Length {
         this.unit = unit;
     }
 
-    /**
-     * Convert to base unit (inches)
-     */
+    // Convert to inches (base unit)
     private double convertToBaseUnit() {
         double result = this.value * this.unit.getConversionFactor();
         return Math.round(result * 100.0) / 100.0;
     }
 
-    /**
-     * Compare two Length objects
-     */
+    // Compare
     private boolean compare(Length that) {
         return this.convertToBaseUnit() == that.convertToBaseUnit();
     }
 
-    /**
-     * Equality override
-     */
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
 
-        Length that = (Length) obj;
+        Length that = (Length) o;
         return compare(that);
     }
 
-    /**
-     * Convert to target unit
-     */
+    // Convert to another unit
     public Length convertTo(LengthUnit targetUnit) {
         if (targetUnit == null) {
             throw new IllegalArgumentException("Target unit cannot be null");
         }
 
-        // Step 1: convert to inches
-        double baseValue = this.convertToBaseUnit();
+        double base = convertToBaseUnit();
+        double converted = base / targetUnit.getConversionFactor();
+        converted = Math.round(converted * 100.0) / 100.0;
 
-        // Step 2: convert to target unit
-        double convertedValue = baseValue / targetUnit.getConversionFactor();
-
-        // Step 3: round
-        convertedValue = Math.round(convertedValue * 100.0) / 100.0;
-
-        return new Length(convertedValue, targetUnit);
+        return new Length(converted, targetUnit);
     }
 
     /**
-     * String representation
+     * ✅ UC6: ADD METHOD
      */
+    public Length add(Length thatLength) {
+        if (thatLength == null) {
+            throw new IllegalArgumentException("Length cannot be null");
+        }
+
+        // Step 1: convert both to inches
+        double thisInches = this.convertToBaseUnit();
+        double thatInches = thatLength.convertToBaseUnit();
+
+        // Step 2: add
+        double sumInches = thisInches + thatInches;
+
+        // Step 3: convert back to THIS unit
+        double resultValue = convertFromBaseToTargetUnit(sumInches, this.unit);
+
+        // Step 4: return new object
+        return new Length(resultValue, this.unit);
+    }
+
+    /**
+     * Helper method (used in add + convertTo)
+     */
+    private double convertFromBaseToTargetUnit(double inches, LengthUnit targetUnit) {
+        double result = inches / targetUnit.getConversionFactor();
+        return Math.round(result * 100.0) / 100.0;
+    }
+
     @Override
     public String toString() {
-        return String.format("%.2f %s", value, unit);
+        return String.format("Quantity(%.2f, %s)", value, unit);
     }
 }
