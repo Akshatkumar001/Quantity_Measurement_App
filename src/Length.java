@@ -1,13 +1,16 @@
+
 public class Length {
 
     // Instance variables
     private double value;
     private LengthUnit unit;
 
-    // Enum for units
+    // Enum for units (base unit = inches)
     public enum LengthUnit {
-        FEET(12.0),     // 1 foot = 12 inches
-        INCHES(1.0);    // base unit
+        FEET(12.0),
+        INCHES(1.0),
+        YARDS(36.0),
+        CENTIMETERS(0.393701);
 
         private final double conversionFactor;
 
@@ -28,24 +31,28 @@ public class Length {
 
     // Convert to base unit (inches)
     private double convertToBaseUnit() {
-        return this.value * this.unit.getConversionFactor();
+        double result = this.value * this.unit.getConversionFactor();
+        return Math.round(result * 100.0) / 100.0; // round to 2 decimals
     }
 
     // Compare two Length objects
-    public boolean compare(Length thatLength) {
-        return Double.compare(
-                this.convertToBaseUnit(),
-                thatLength.convertToBaseUnit()
-        ) == 0;
+    public boolean compare(Length that) {
+        return this.convertToBaseUnit() == that.convertToBaseUnit();
     }
 
-    // Override equals()
+    // Override equals
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || !(o instanceof Length)) return false;
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
 
-        Length that = (Length) o;
+        Length that = (Length) obj;
         return this.compare(that);
+    }
+
+    // For debugging (optional)
+    @Override
+    public String toString() {
+        return value + " " + unit;
     }
 }
